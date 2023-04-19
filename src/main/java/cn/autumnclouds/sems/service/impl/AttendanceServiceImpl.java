@@ -1,8 +1,11 @@
 package cn.autumnclouds.sems.service.impl;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import cn.autumnclouds.sems.model.dto.attendance.AttendanceQueryRequest;
+import cn.autumnclouds.sems.model.entity.Department;
 import cn.autumnclouds.sems.model.entity.Employee;
 import cn.autumnclouds.sems.model.entity.Salary;
 import cn.autumnclouds.sems.service.EmployeeService;
@@ -38,7 +41,6 @@ public class AttendanceServiceImpl extends ServiceImpl<AttendanceMapper, Attenda
         }
         String employeeName = attendanceQueryRequest.getEmployeeName();
         Long empno = attendanceQueryRequest.getEmpno();
-        LocalDate date = attendanceQueryRequest.getDate();
         String sortField = attendanceQueryRequest.getSortField();
         boolean isAsc = attendanceQueryRequest.isAsc();
         LocalDate beginDate = attendanceQueryRequest.getBeginDate();
@@ -52,14 +54,20 @@ public class AttendanceServiceImpl extends ServiceImpl<AttendanceMapper, Attenda
             // 设置指定排序字段
             lambdaQueryWrapper = new QueryWrapper<Attendance>().orderBy(true, isAsc, sortField).lambda();
         }
-        // 设置查询条件
+        // 根据员工名称条件查询
+        if (StrUtil.isNotBlank(employeeName)) {
+            List<Long> empIds = employeeService.listEmployeesByName(employeeName)
+                    .stream()
+                    .map(Employee::getEmployeeId)
+                    .collect(Collectors.toList());
+            if (empIds.isEmpty()) {
+                return Page.of(currentPage, pageSize, 0);
+            } else {
+                lambdaQueryWrapper.in(Attendance::getEmployeeId, empIds);
+            }
+        }
+        // 设置其他查询条件
         lambdaQueryWrapper
-                .in(StrUtil.isNotBlank(employeeName),
-                        Attendance::getEmployeeId,
-                        employeeService.listEmployeesByName(employeeName)
-                                .stream()
-                                .map(Employee::getEmployeeId)
-                                .toArray())
                 .eq(empno != null, Attendance::getEmployeeId, employeeService.getEmployeeByEmpno(empno).getEmployeeId())
                 .ge(beginDate != null, Attendance::getDate, beginDate)
                 .le(endDate != null, Attendance::getDate, endDate);

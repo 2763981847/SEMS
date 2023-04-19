@@ -1,5 +1,7 @@
 package cn.autumnclouds.sems.service.impl;
 
+import cn.autumnclouds.sems.common.ErrorCode;
+import cn.autumnclouds.sems.exception.ThrowUtils;
 import cn.autumnclouds.sems.model.dto.department.DepartmentAddRequest;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
@@ -50,7 +52,10 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
 
     @Override
     public List<Department> listDepartmentsByName(String name) {
-        return StrUtil.isBlank(name) ? Collections.emptyList() : this.lambdaQuery().like(Department::getName, name).list();
+        if (StrUtil.isBlank(name)) {
+            return Collections.emptyList();
+        }
+        return lambdaQuery().like(Department::getName, name).list();
     }
 
 }

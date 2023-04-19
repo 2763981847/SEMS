@@ -27,9 +27,5 @@ public class AttendanceQueryRequest extends PageRequest {
      */
     private Long empno;
 
-    /**
-     * 考勤日期
-     */
-    private LocalDate date;
 
 }

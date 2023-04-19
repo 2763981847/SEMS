@@ -2,6 +2,7 @@ package cn.autumnclouds.sems.service.impl;
 
 import cn.autumnclouds.sems.model.dto.salary.SalaryAddRequest;
 import cn.autumnclouds.sems.model.dto.salary.SalaryQueryRequest;
+import cn.autumnclouds.sems.model.entity.Attendance;
 import cn.autumnclouds.sems.model.entity.Employee;
 import cn.autumnclouds.sems.service.EmployeeService;
 import cn.hutool.core.bean.BeanUtil;
@@ -19,7 +20,9 @@ import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * @author Oreki
@@ -80,13 +83,20 @@ public class SalaryServiceImpl extends ServiceImpl<SalaryMapper, Salary> impleme
             // 设置指定排序字段
             lambdaQueryWrapper = new QueryWrapper<Salary>().orderBy(true, isAsc, sortField).lambda();
         }
+        // 根据员工名称条件查询
+        if (StrUtil.isNotBlank(employeeName)) {
+            List<Long> empIds = employeeService.listEmployeesByName(employeeName)
+                    .stream()
+                    .map(Employee::getEmployeeId)
+                    .collect(Collectors.toList());
+            if (empIds.isEmpty()) {
+                return Page.of(currentPage, pageSize, 0);
+            } else {
+                lambdaQueryWrapper.in(Salary::getEmployeeId, empIds);
+            }
+        }
+        //设置其他条件
         lambdaQueryWrapper
-                .in(StrUtil.isNotBlank(employeeName),
-                        Salary::getEmployeeId,
-                        employeeService.listEmployeesByName(employeeName)
-                                .stream()
-                                .map(Employee::getEmployeeId)
-                                .toArray())
                 .eq(empno != null, Salary::getSalaryId, employeeService.getEmployeeByEmpno(empno).getEmployeeId())
                 .ge(minBaseSalary != null, Salary::getBaseSalary, minBaseSalary)
                 .le(maxBaseSalary != null, Salary::getBaseSalary, maxBaseSalary)

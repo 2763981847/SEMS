@@ -1,5 +1,6 @@
 package cn.autumnclouds.sems.service.impl;
 
+import cn.autumnclouds.sems.common.ErrorCode;
 import cn.autumnclouds.sems.exception.ThrowUtils;
 import cn.autumnclouds.sems.model.dto.employee.EmployeeAddRequest;
 import cn.autumnclouds.sems.model.dto.employee.EmployeeQueryRequest;
@@ -30,6 +31,7 @@ import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Oreki
@@ -48,15 +50,15 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         String phoneNumber = employeeAddRequest.getPhoneNumber();
         Long empno = employeeAddRequest.getEmpno();
         // 检查身份证号格式
-        ThrowUtils.throwIf(!IdcardUtil.isValidCard(idNumber), new BindingException("身份证号不合法"));
+        ThrowUtils.throwIf(!IdcardUtil.isValidCard(idNumber), ErrorCode.PARAMS_ERROR, "身份证号不合法");
         // 检查手机号格式
-        ThrowUtils.throwIf(!PhoneUtil.isMobile(phoneNumber), new BindingException("手机号不合法"));
+        ThrowUtils.throwIf(!PhoneUtil.isMobile(phoneNumber), ErrorCode.PARAMS_ERROR, "手机号不合法");
         // 检查工号是否重复
         Long count = this.lambdaQuery().eq(Employee::getEmpno, empno).select(Employee::getEmpno).count();
-        ThrowUtils.throwIf(count > 0, new BindingException("工号已存在"));
+        ThrowUtils.throwIf(count > 0, ErrorCode.PARAMS_ERROR, "工号重复");
         //检查部门是否真实存在
         Long departmentId = employeeAddRequest.getDepartmentId();
-        ThrowUtils.throwIf(departmentService.getById(departmentId) == null, new BindingException("部门不存在"));
+        ThrowUtils.throwIf(departmentService.getById(departmentId) == null, ErrorCode.PARAMS_ERROR, "部门不存在");
         // 设置员工基本属性
         Employee employee = new Employee();
         BeanUtil.copyProperties(employeeAddRequest, employee);
@@ -97,17 +99,24 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
             // 设置指定排序字段
             lambdaQueryWrapper = new QueryWrapper<Employee>().orderBy(true, isAsc, sortField).lambda();
         }
+        // 根据部门名称条件查询
+        if (StrUtil.isNotBlank(departmentName)) {
+            List<Long> depIds = departmentService.listDepartmentsByName(departmentName)
+                    .stream()
+                    .map(Department::getDepartmentId)
+                    .collect(Collectors.toList());
+            if (depIds.isEmpty()) {
+                return Page.of(currentPage, pageSize, 0);
+            } else {
+                lambdaQueryWrapper.in(Employee::getDepartmentId, depIds);
+            }
+        }
+        //其余条件查询
         lambdaQueryWrapper
                 .eq(employeeId != null, Employee::getEmployeeId, employeeId)
                 .like(StringUtils.isNotBlank(name), Employee::getName, name)
                 .ge(minAge != null, Employee::getAge, minAge)
                 .le(maxAge != null, Employee::getAge, maxAge)
-                .in(StrUtil.isNotBlank(departmentName),
-                        Employee::getDepartmentId,
-                        departmentService.listDepartmentsByName(departmentName)
-                                .stream()
-                                .map(Department::getDepartmentId)
-                                .toArray())
                 .eq(sex != null, Employee::getSex, sex)
                 .like(StringUtils.isNotBlank(jobTitle), Employee::getJobTitle, jobTitle)
                 .ge(beginDate != null, Employee::getEnrollmentDate, beginDate)

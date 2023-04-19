@@ -42,13 +42,14 @@ public class EmployeeAddRequest {
     /**
      * 身份证号
      */
-    @NotNull(message = "身份证号不能为空")
+    @NotBlank(message = "身份证号不能为空")
     private String idNumber;
 
 
     /**
      * 手机号
      */
+    @NotBlank(message = "手机号不能为空")
     private String phoneNumber;
 
     /**
