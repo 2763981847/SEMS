@@ -6,10 +6,10 @@ import cn.autumnclouds.sems.model.entity.Department;
 import cn.autumnclouds.sems.service.DepartmentService;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -48,8 +48,10 @@ public class DepartmentController {
         return department != null ? Result.success(department) : Result.fail("查询失败");
     }
 
-    @GetMapping("/{current}/{size}")
-    public Result<Page<Department>> listDepartments(@PathVariable("current") int currentPage, @PathVariable("size") int pageSize, @RequestParam(required = false) Department department) {
+    @PostMapping("/{current}/{size}")
+    public Result<Page<Department>> listDepartments(@PathVariable("current") int currentPage,
+                                                    @PathVariable("size") int pageSize,
+                                                    @RequestBody(required = false) Department department) {
         Page<Department> departmentPage = departmentService.listDepartmentsPage(currentPage, pageSize, department);
         return Result.success(departmentPage);
     }

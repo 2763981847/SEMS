@@ -22,12 +22,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.autumnclouds.sems.model.entity.Employee;
 import cn.autumnclouds.sems.service.EmployeeService;
 import cn.autumnclouds.sems.mapper.EmployeeMapper;
-import jakarta.annotation.Resource;
 import org.apache.ibatis.binding.BindingException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,12 +48,15 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
         String phoneNumber = employeeAddRequest.getPhoneNumber();
         Long empno = employeeAddRequest.getEmpno();
         // 检查身份证号格式
-        ThrowUtils.throwIf(IdcardUtil.isValidCard(idNumber), new BindingException("身份证号不合法"));
+        ThrowUtils.throwIf(!IdcardUtil.isValidCard(idNumber), new BindingException("身份证号不合法"));
         // 检查手机号格式
-        ThrowUtils.throwIf(PhoneUtil.isMobile(phoneNumber), new BindingException("手机号不合法"));
+        ThrowUtils.throwIf(!PhoneUtil.isMobile(phoneNumber), new BindingException("手机号不合法"));
         // 检查工号是否重复
         Long count = this.lambdaQuery().eq(Employee::getEmpno, empno).select(Employee::getEmpno).count();
         ThrowUtils.throwIf(count > 0, new BindingException("工号已存在"));
+        //检查部门是否真实存在
+        Long departmentId = employeeAddRequest.getDepartmentId();
+        ThrowUtils.throwIf(departmentService.getById(departmentId) == null, new BindingException("部门不存在"));
         // 设置员工基本属性
         Employee employee = new Employee();
         BeanUtil.copyProperties(employeeAddRequest, employee);
@@ -64,6 +68,10 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
 
     @Override
     public Page<Employee> listEmployeesPage(int currentPage, int pageSize, EmployeeQueryRequest employeeQueryRequest) {
+        if (employeeQueryRequest == null) {
+            return lambdaQuery().orderBy(true, true, Employee::getEmployeeId)
+                    .page(new Page<>(currentPage, pageSize));
+        }
         Long employeeId = employeeQueryRequest.getEmployeeId();
         String name = employeeQueryRequest.getName();
         Integer minAge = employeeQueryRequest.getMinAge();
@@ -94,7 +102,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
                 .like(StringUtils.isNotBlank(name), Employee::getName, name)
                 .ge(minAge != null, Employee::getAge, minAge)
                 .le(maxAge != null, Employee::getAge, maxAge)
-                .in(StringUtils.isNotBlank(departmentName),
+                .in(StrUtil.isNotBlank(departmentName),
                         Employee::getDepartmentId,
                         departmentService.listDepartmentsByName(departmentName)
                                 .stream()
@@ -115,7 +123,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
 
     @Override
     public List<Employee> listEmployeesByName(String name) {
-        return StrUtil.isBlank(name) ? null : this.lambdaQuery().like(Employee::getName, name).list();
+        return StrUtil.isBlank(name) ? Collections.emptyList() : this.lambdaQuery().like(Employee::getName, name).list();
     }
 
     @Override

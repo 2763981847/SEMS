@@ -13,9 +13,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.autumnclouds.sems.model.entity.Salary;
 import cn.autumnclouds.sems.service.SalaryService;
 import cn.autumnclouds.sems.mapper.SalaryMapper;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -42,6 +42,10 @@ public class SalaryServiceImpl extends ServiceImpl<SalaryMapper, Salary> impleme
 
     @Override
     public Page<Salary> listSalariesPage(int currentPage, int pageSize, SalaryQueryRequest salaryQueryRequest) {
+        if (salaryQueryRequest == null) {
+            return lambdaQuery().orderBy(true, false, Salary::getPayday)
+                    .page(new Page<>(currentPage, pageSize));
+        }
         String employeeName = salaryQueryRequest.getEmployeeName();
         Long empno = salaryQueryRequest.getEmpno();
         Page<Salary> emptyPage = new Page<>(currentPage, pageSize, 0);
@@ -77,6 +81,12 @@ public class SalaryServiceImpl extends ServiceImpl<SalaryMapper, Salary> impleme
             lambdaQueryWrapper = new QueryWrapper<Salary>().orderBy(true, isAsc, sortField).lambda();
         }
         lambdaQueryWrapper
+                .in(StrUtil.isNotBlank(employeeName),
+                        Salary::getEmployeeId,
+                        employeeService.listEmployeesByName(employeeName)
+                                .stream()
+                                .map(Employee::getEmployeeId)
+                                .toArray())
                 .eq(empno != null, Salary::getSalaryId, employeeService.getEmployeeByEmpno(empno).getEmployeeId())
                 .ge(minBaseSalary != null, Salary::getBaseSalary, minBaseSalary)
                 .le(maxBaseSalary != null, Salary::getBaseSalary, maxBaseSalary)

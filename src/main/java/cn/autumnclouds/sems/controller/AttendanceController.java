@@ -5,10 +5,10 @@ import cn.autumnclouds.sems.model.dto.attendance.AttendanceQueryRequest;
 import cn.autumnclouds.sems.model.entity.Attendance;
 import cn.autumnclouds.sems.service.AttendanceService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
@@ -40,10 +40,10 @@ public class AttendanceController {
         return attendance != null ? Result.success(attendance) : Result.fail("查询失败");
     }
 
-    @GetMapping("/{current}/{size}")
+    @PostMapping("/{current}/{size}")
     public Result<Page<Attendance>> listAttendances(@PathVariable("current") int currentPage,
                                                     @PathVariable("size") int pageSize,
-                                                    @RequestParam(required = false) AttendanceQueryRequest attendanceQueryRequest) {
+                                                    @RequestBody(required = false) AttendanceQueryRequest attendanceQueryRequest) {
         Page<Attendance> attendancePage = attendanceService.listAttendancesPage(currentPage, pageSize, attendanceQueryRequest);
         return Result.success(attendancePage);
     }

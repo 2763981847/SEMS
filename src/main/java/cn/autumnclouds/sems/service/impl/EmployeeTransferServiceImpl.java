@@ -15,8 +15,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.autumnclouds.sems.model.entity.EmployeeTransfer;
 import cn.autumnclouds.sems.service.EmployeeTransferService;
 import cn.autumnclouds.sems.mapper.EmployeeTransferMapper;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @author Oreki
@@ -34,6 +35,10 @@ public class EmployeeTransferServiceImpl extends ServiceImpl<EmployeeTransferMap
     public Page<EmployeeTransfer> listEmployeeTransfersPage(int currentPage,
                                                             int pageSize,
                                                             EmployeeTransferQueryRequest employeeTransferQueryRequest) {
+        if (employeeTransferQueryRequest == null) {
+            return lambdaQuery().orderBy(true, false, EmployeeTransfer::getTransferDate)
+                    .page(new Page<>(currentPage, pageSize));
+        }
         String employeeName = employeeTransferQueryRequest.getEmployeeName();
         Long empno = employeeTransferQueryRequest.getEmpno();
         String transferReason = employeeTransferQueryRequest.getTransferReason();

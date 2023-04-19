@@ -3,7 +3,6 @@ package cn.autumnclouds.sems.model.dto.employee;
 import cn.autumnclouds.sems.common.PageRequest;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

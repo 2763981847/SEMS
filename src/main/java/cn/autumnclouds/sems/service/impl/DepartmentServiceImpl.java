@@ -11,6 +11,7 @@ import cn.autumnclouds.sems.mapper.DepartmentMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,6 +33,10 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
 
     @Override
     public Page<Department> listDepartmentsPage(int currentPage, int pageSize, Department department) {
+        if (department == null) {
+            return lambdaQuery().orderBy(true, true, Department::getDepartmentId)
+                    .page(new Page<>(currentPage, pageSize));
+        }
         Long departmentId = department.getDepartmentId();
         String name = department.getName();
         String introduction = department.getIntroduction();
@@ -45,7 +50,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
 
     @Override
     public List<Department> listDepartmentsByName(String name) {
-        return StrUtil.isBlank(name) ? null : this.lambdaQuery().like(Department::getName, name).list();
+        return StrUtil.isBlank(name) ? Collections.emptyList() : this.lambdaQuery().like(Department::getName, name).list();
     }
 
 }

@@ -5,9 +5,9 @@ import cn.autumnclouds.sems.model.dto.employeeTransfer.EmployeeTransferQueryRequ
 import cn.autumnclouds.sems.model.entity.EmployeeTransfer;
 import cn.autumnclouds.sems.service.EmployeeTransferService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
@@ -39,10 +39,10 @@ public class EmployeeTransferController {
         return employeeTransfer != null ? Result.success(employeeTransfer) : Result.fail("查询失败");
     }
 
-    @GetMapping("/{current}/{size}")
+    @PostMapping("/{current}/{size}")
     public Result<Page<EmployeeTransfer>> listEmployeeTransfers(@PathVariable("current") int currentPage,
                                                                 @PathVariable("size") int pageSize,
-                                                                @RequestParam(required = false) EmployeeTransferQueryRequest employeeTransferQueryRequest) {
+                                                                @RequestBody(required = false) EmployeeTransferQueryRequest employeeTransferQueryRequest) {
         Page<EmployeeTransfer> employeeTransferPage = employeeTransferService.listEmployeeTransfersPage(currentPage, pageSize, employeeTransferQueryRequest);
         return Result.success(employeeTransferPage);
     }

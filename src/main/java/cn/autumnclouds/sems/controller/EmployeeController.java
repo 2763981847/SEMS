@@ -9,10 +9,10 @@ import cn.autumnclouds.sems.model.entity.Employee;
 import cn.autumnclouds.sems.service.DepartmentService;
 import cn.autumnclouds.sems.service.EmployeeService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
@@ -50,10 +50,10 @@ public class EmployeeController {
         return employee != null ? Result.success(employee) : Result.fail("查询失败");
     }
 
-    @GetMapping("/{current}/{size}")
+    @PostMapping("/{current}/{size}")
     public Result<Page<Employee>> listDepartments(@PathVariable("current") int currentPage,
                                                   @PathVariable("size") int pageSize,
-                                                  @RequestParam(required = false) EmployeeQueryRequest employeeQueryRequest) {
+                                                  @RequestBody(required = false) EmployeeQueryRequest employeeQueryRequest) {
         Page<Employee> departmentPage = employeeService.listEmployeesPage(currentPage, pageSize, employeeQueryRequest);
         return Result.success(departmentPage);
     }

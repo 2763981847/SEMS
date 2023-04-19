@@ -14,8 +14,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.autumnclouds.sems.model.entity.Attendance;
 import cn.autumnclouds.sems.service.AttendanceService;
 import cn.autumnclouds.sems.mapper.AttendanceMapper;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @author Oreki
@@ -31,6 +32,10 @@ public class AttendanceServiceImpl extends ServiceImpl<AttendanceMapper, Attenda
 
     @Override
     public Page<Attendance> listAttendancesPage(int currentPage, int pageSize, AttendanceQueryRequest attendanceQueryRequest) {
+        if (attendanceQueryRequest == null) {
+            return lambdaQuery().orderBy(true, false, Attendance::getDate)
+                    .page(new Page<>(currentPage, pageSize));
+        }
         String employeeName = attendanceQueryRequest.getEmployeeName();
         Long empno = attendanceQueryRequest.getEmpno();
         LocalDate date = attendanceQueryRequest.getDate();
