@@ -32,13 +32,13 @@ public class SalaryAddRequest {
     /**
      * 奖金
      */
-    @Range(min = 0, message = "奖金必须不得小于{min}")
+    @Range(min = 0, message = "奖金不得小于{min}")
     private Integer bonus;
 
     /**
      * 罚金
      */
-    @Range(min = 0, message = "罚金必须不得小于{min}")
+    @Range(min = 0, message = "罚金不得小于{min}")
     private Integer fine;
 
 }

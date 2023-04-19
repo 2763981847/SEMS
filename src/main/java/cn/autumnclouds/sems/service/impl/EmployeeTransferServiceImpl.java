@@ -75,9 +75,14 @@ public class EmployeeTransferServiceImpl extends ServiceImpl<EmployeeTransferMap
                 lambdaQueryWrapper.in(EmployeeTransfer::getEmployeeId, empIds);
             }
         }
+        // 根据员工工号条件查询
+        if (empno != null) {
+            Employee employee = employeeService.getEmployeeByEmpno(empno);
+            ThrowUtils.throwIf(employee == null, ErrorCode.PARAMS_ERROR, "员工不存在");
+            lambdaQueryWrapper.eq(EmployeeTransfer::getEmployeeId, employee.getEmployeeId());
+        }
         //设置其他查询条件
         lambdaQueryWrapper
-                .eq(empno != null, EmployeeTransfer::getEmployeeId, employeeService.getEmployeeByEmpno(empno).getEmployeeId())
                 .like(StrUtil.isNotBlank(transferReason), EmployeeTransfer::getTransferReason, transferReason)
                 .in(StrUtil.isNotBlank(outDepName), EmployeeTransfer::getOutDepId,
                         employeeService.listEmployeesByName(outDepName)

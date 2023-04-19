@@ -25,7 +25,7 @@ public class AttendanceController {
     private AttendanceService attendanceService;
 
     @PostMapping("/sign/{isSignIn}/{employeeId}")
-    @ApiOperation("签到 isSignIn: false:签退 true:签到")
+    @ApiOperation("签到签退 isSignIn: false:签退 true:签到")
     public Result<String> sign(@PathVariable("isSignIn") Boolean isSignIn,
                                @PathVariable("employeeId") Long employeeId) {
         boolean success = attendanceService.sign(isSignIn, employeeId);
@@ -57,10 +57,10 @@ public class AttendanceController {
         return attendance != null ? Result.success(attendance) : Result.fail("查询失败");
     }
 
-    @PostMapping("/{current}/{size}")
+    @GetMapping("/{current}/{size}")
     public Result<Page<Attendance>> listAttendances(@PathVariable("current") int currentPage,
                                                     @PathVariable("size") int pageSize,
-                                                    @RequestBody(required = false) AttendanceQueryRequest attendanceQueryRequest) {
+                                                    AttendanceQueryRequest attendanceQueryRequest) {
         Page<Attendance> attendancePage = attendanceService.listAttendancesPage(currentPage, pageSize, attendanceQueryRequest);
         return Result.success(attendancePage);
     }

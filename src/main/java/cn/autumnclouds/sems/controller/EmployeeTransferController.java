@@ -45,10 +45,10 @@ public class EmployeeTransferController {
         return employeeTransfer != null ? Result.success(employeeTransfer) : Result.fail("查询失败");
     }
 
-    @PostMapping("/{current}/{size}")
+    @GetMapping("/{current}/{size}")
     public Result<Page<EmployeeTransfer>> listEmployeeTransfers(@PathVariable("current") int currentPage,
                                                                 @PathVariable("size") int pageSize,
-                                                                @RequestBody(required = false) EmployeeTransferQueryRequest employeeTransferQueryRequest) {
+                                                                EmployeeTransferQueryRequest employeeTransferQueryRequest) {
         Page<EmployeeTransfer> employeeTransferPage = employeeTransferService.listEmployeeTransfersPage(currentPage, pageSize, employeeTransferQueryRequest);
         return Result.success(employeeTransferPage);
     }

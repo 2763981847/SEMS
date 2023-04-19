@@ -27,7 +27,7 @@ public class Knife4jConfig {
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
-                        .title("接口文档")
+                        .title("SEMS接口文档")
                         .description("SEMS")
                         .version("1.0")
                         .description("基于CQU数据库实验的简单员工管理系统Demo")

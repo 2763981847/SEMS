@@ -1,8 +1,11 @@
 package cn.autumnclouds.sems.service.impl;
 
+import cn.autumnclouds.sems.common.ErrorCode;
+import cn.autumnclouds.sems.exception.ThrowUtils;
 import cn.autumnclouds.sems.model.dto.salary.SalaryAddRequest;
 import cn.autumnclouds.sems.model.dto.salary.SalaryQueryRequest;
 import cn.autumnclouds.sems.model.entity.Employee;
+import cn.autumnclouds.sems.model.entity.EmployeeTransfer;
 import cn.autumnclouds.sems.service.EmployeeService;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
@@ -93,9 +96,14 @@ public class SalaryServiceImpl extends ServiceImpl<SalaryMapper, Salary> impleme
                 lambdaQueryWrapper.in(Salary::getEmployeeId, empIds);
             }
         }
+        // 根据员工工号条件查询
+        if (empno != null) {
+            Employee employee = employeeService.getEmployeeByEmpno(empno);
+            ThrowUtils.throwIf(employee == null, ErrorCode.PARAMS_ERROR, "员工不存在");
+            lambdaQueryWrapper.eq(Salary::getEmployeeId, employee.getEmployeeId());
+        }
         //设置其他条件
         lambdaQueryWrapper
-                .eq(empno != null, Salary::getSalaryId, employeeService.getEmployeeByEmpno(empno).getEmployeeId())
                 .ge(minBaseSalary != null, Salary::getBaseSalary, minBaseSalary)
                 .le(maxBaseSalary != null, Salary::getBaseSalary, maxBaseSalary)
                 .ge(minBonus != null, Salary::getBonus, minBonus)

@@ -69,9 +69,14 @@ public class AttendanceServiceImpl extends ServiceImpl<AttendanceMapper, Attenda
                 lambdaQueryWrapper.in(Attendance::getEmployeeId, empIds);
             }
         }
+        // 根据员工工号条件查询
+        if (empno != null) {
+            Employee employee = employeeService.getEmployeeByEmpno(empno);
+            ThrowUtils.throwIf(employee == null, ErrorCode.PARAMS_ERROR, "员工不存在");
+            lambdaQueryWrapper.eq(Attendance::getEmployeeId, employee.getEmployeeId());
+        }
         // 设置其他查询条件
         lambdaQueryWrapper
-                .eq(empno != null, Attendance::getEmployeeId, employeeService.getEmployeeByEmpno(empno).getEmployeeId())
                 .ge(beginDate != null, Attendance::getDate, beginDate)
                 .le(endDate != null, Attendance::getDate, endDate);
         return this.page(new Page<>(currentPage, pageSize), lambdaQueryWrapper);

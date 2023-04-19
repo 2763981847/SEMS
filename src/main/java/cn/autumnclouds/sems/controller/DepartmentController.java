@@ -48,10 +48,10 @@ public class DepartmentController {
         return department != null ? Result.success(department) : Result.fail("查询失败");
     }
 
-    @PostMapping("/{current}/{size}")
+    @GetMapping("/{current}/{size}")
     public Result<Page<Department>> listDepartments(@PathVariable("current") int currentPage,
                                                     @PathVariable("size") int pageSize,
-                                                    @RequestBody(required = false) Department department) {
+                                                    Department department) {
         Page<Department> departmentPage = departmentService.listDepartmentsPage(currentPage, pageSize, department);
         return Result.success(departmentPage);
     }
