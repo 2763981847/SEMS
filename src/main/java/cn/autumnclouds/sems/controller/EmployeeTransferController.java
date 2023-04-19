@@ -1,6 +1,7 @@
 package cn.autumnclouds.sems.controller;
 
 import cn.autumnclouds.sems.common.Result;
+import cn.autumnclouds.sems.model.dto.employeeTransfer.EmployeeTransferAddRequest;
 import cn.autumnclouds.sems.model.dto.employeeTransfer.EmployeeTransferQueryRequest;
 import cn.autumnclouds.sems.model.entity.EmployeeTransfer;
 import cn.autumnclouds.sems.service.EmployeeTransferService;
@@ -20,6 +21,11 @@ public class EmployeeTransferController {
     @Resource
     private EmployeeTransferService employeeTransferService;
 
+    @PostMapping
+    public Result<String> addEmployeeTransfer(@Valid @RequestBody EmployeeTransferAddRequest employeeTransferAddRequest) {
+        boolean success = employeeTransferService.addEmployeeTransfer(employeeTransferAddRequest);
+        return success ? Result.success("调动成功") : Result.fail("调动失败");
+    }
 
     @DeleteMapping("/{id}")
     public Result<String> deleteEmployeeTransfer(@PathVariable("id") Integer id) {

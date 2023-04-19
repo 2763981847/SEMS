@@ -5,6 +5,8 @@ import cn.autumnclouds.sems.model.dto.attendance.AttendanceQueryRequest;
 import cn.autumnclouds.sems.model.entity.Attendance;
 import cn.autumnclouds.sems.service.AttendanceService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,21 @@ import javax.validation.Valid;
 public class AttendanceController {
     @Resource
     private AttendanceService attendanceService;
+
+    @PostMapping("/sign/{isSignIn}/{employeeId}")
+    @ApiOperation("签到 isSignIn: false:签退 true:签到")
+    public Result<String> sign(@PathVariable("isSignIn") Boolean isSignIn,
+                               @PathVariable("employeeId") Long employeeId) {
+        boolean success = attendanceService.sign(isSignIn, employeeId);
+        String msg = isSignIn ? "签到" : "签退";
+        return success ? Result.success(msg + "成功") : Result.fail(msg + "失败");
+    }
+
+    @PostMapping
+    public Result<String> addAttendance(@Valid @RequestBody Attendance attendance) {
+        boolean success = attendanceService.save(attendance);
+        return success ? Result.success("添加成功") : Result.fail("添加失败");
+    }
 
     @DeleteMapping("/{id}")
     public Result<String> deleteAttendance(@PathVariable("id") Integer id) {

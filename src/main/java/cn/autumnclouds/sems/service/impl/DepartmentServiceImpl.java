@@ -11,6 +11,7 @@ import cn.autumnclouds.sems.model.entity.Department;
 import cn.autumnclouds.sems.service.DepartmentService;
 import cn.autumnclouds.sems.mapper.DepartmentMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -26,6 +27,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         implements DepartmentService {
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean addDepartment(DepartmentAddRequest departmentAddRequest) {
         Department department = new Department();
         BeanUtil.copyProperties(departmentAddRequest, department);

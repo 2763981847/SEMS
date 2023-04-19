@@ -25,6 +25,7 @@ import cn.autumnclouds.sems.service.EmployeeService;
 import cn.autumnclouds.sems.mapper.EmployeeMapper;
 import org.apache.ibatis.binding.BindingException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.annotation.Resource;
@@ -45,6 +46,7 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeMapper, Employee>
     DepartmentService departmentService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean addEmployee(EmployeeAddRequest employeeAddRequest) {
         String idNumber = employeeAddRequest.getIdNumber();
         String phoneNumber = employeeAddRequest.getPhoneNumber();

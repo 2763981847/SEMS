@@ -1,9 +1,12 @@
 package cn.autumnclouds.sems.service.impl;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cn.autumnclouds.sems.common.ErrorCode;
+import cn.autumnclouds.sems.exception.ThrowUtils;
 import cn.autumnclouds.sems.model.dto.attendance.AttendanceQueryRequest;
 import cn.autumnclouds.sems.model.entity.Department;
 import cn.autumnclouds.sems.model.entity.Employee;
@@ -73,6 +76,42 @@ public class AttendanceServiceImpl extends ServiceImpl<AttendanceMapper, Attenda
                 .le(endDate != null, Attendance::getDate, endDate);
         return this.page(new Page<>(currentPage, pageSize), lambdaQueryWrapper);
     }
+
+    @Override
+    public boolean sign(Boolean isSignIn, Long employeeId) {
+        if (isSignIn == null || employeeId == null) {
+            return false;
+        }
+        return Boolean.TRUE.equals(isSignIn) ? signIn(employeeId) : signOut(employeeId);
+    }
+
+    private boolean signIn(Long employeeId) {
+        //检查今日是否已经签到
+        Attendance attendance = lambdaQuery().eq(Attendance::getEmployeeId, employeeId)
+                .eq(Attendance::getDate, LocalDate.now())
+                .one();
+        ThrowUtils.throwIf(attendance != null, ErrorCode.OPERATION_ERROR, "今日已签到");
+        //签到
+        attendance = new Attendance();
+        attendance.setDate(LocalDate.now());
+        attendance.setSignInTime(LocalTime.now());
+        attendance.setEmployeeId(employeeId);
+        return this.save(attendance);
+    }
+
+    private boolean signOut(Long employeeId) {
+        //检查今日是否已经签到
+        Attendance attendance = lambdaQuery().eq(Attendance::getEmployeeId, employeeId)
+                .eq(Attendance::getDate, LocalDate.now())
+                .one();
+        ThrowUtils.throwIf(attendance == null, ErrorCode.OPERATION_ERROR, "今日还未签到");
+        //检查今日是否已经签退
+        ThrowUtils.throwIf(attendance.getSignOutTime() != null, ErrorCode.OPERATION_ERROR, "今日已签退");
+        //签退
+        attendance.setSignOutTime(LocalTime.now());
+        return this.updateById(attendance);
+    }
+
 }
 
 

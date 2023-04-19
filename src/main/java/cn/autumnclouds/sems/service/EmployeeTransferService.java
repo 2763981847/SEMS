@@ -1,5 +1,6 @@
 package cn.autumnclouds.sems.service;
 
+import cn.autumnclouds.sems.model.dto.employeeTransfer.EmployeeTransferAddRequest;
 import cn.autumnclouds.sems.model.dto.employeeTransfer.EmployeeTransferQueryRequest;
 import cn.autumnclouds.sems.model.entity.EmployeeTransfer;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface EmployeeTransferService extends IService<EmployeeTransfer> {
 
     Page<EmployeeTransfer> listEmployeeTransfersPage(int currentPage, int pageSize, EmployeeTransferQueryRequest employeeTransferQueryRequest);
+
+    boolean addEmployeeTransfer(EmployeeTransferAddRequest employeeTransferAddRequest);
 }

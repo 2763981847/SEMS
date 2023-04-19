@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
@@ -29,6 +30,8 @@ public class Knife4jConfig {
                         .title("接口文档")
                         .description("SEMS")
                         .version("1.0")
+                        .description("基于CQU数据库实验的简单员工管理系统Demo")
+                        .contact(new Contact("oreki", "www.autumnclouds.cn", "2763981847@qq.com"))
                         .build())
                 .select()
                 // 指定 Controller 扫描包路径

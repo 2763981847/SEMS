@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface AttendanceService extends IService<Attendance> {
 
     Page<Attendance> listAttendancesPage(int currentPage, int pageSize, AttendanceQueryRequest attendanceQueryRequest);
+
+    boolean sign(Boolean isSignIn, Long employeeId);
 }

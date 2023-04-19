@@ -2,7 +2,6 @@ package cn.autumnclouds.sems.service.impl;
 
 import cn.autumnclouds.sems.model.dto.salary.SalaryAddRequest;
 import cn.autumnclouds.sems.model.dto.salary.SalaryQueryRequest;
-import cn.autumnclouds.sems.model.entity.Attendance;
 import cn.autumnclouds.sems.model.entity.Employee;
 import cn.autumnclouds.sems.service.EmployeeService;
 import cn.hutool.core.bean.BeanUtil;
@@ -15,13 +14,11 @@ import cn.autumnclouds.sems.model.entity.Salary;
 import cn.autumnclouds.sems.service.SalaryService;
 import cn.autumnclouds.sems.mapper.SalaryMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +32,7 @@ public class SalaryServiceImpl extends ServiceImpl<SalaryMapper, Salary> impleme
     @Resource
     EmployeeService employeeService;
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean addSalary(SalaryAddRequest salaryAddRequest) {
         Salary salary = new Salary();

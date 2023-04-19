@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cn.autumnclouds.sems.common.ErrorCode;
+import cn.autumnclouds.sems.exception.ThrowUtils;
+import cn.autumnclouds.sems.model.dto.employeeTransfer.EmployeeTransferAddRequest;
 import cn.autumnclouds.sems.model.dto.employeeTransfer.EmployeeTransferQueryRequest;
 import cn.autumnclouds.sems.model.entity.Attendance;
 import cn.autumnclouds.sems.model.entity.Employee;
@@ -18,6 +21,7 @@ import cn.autumnclouds.sems.model.entity.EmployeeTransfer;
 import cn.autumnclouds.sems.service.EmployeeTransferService;
 import cn.autumnclouds.sems.mapper.EmployeeTransferMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -84,6 +88,34 @@ public class EmployeeTransferServiceImpl extends ServiceImpl<EmployeeTransferMap
                 .ge(beginDate != null, EmployeeTransfer::getTransferDate, beginDate)
                 .le(endDate != null, EmployeeTransfer::getTransferDate, endDate);
         return this.page(new Page<>(currentPage, pageSize), lambdaQueryWrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean addEmployeeTransfer(EmployeeTransferAddRequest employeeTransferAddRequest) {
+        Long employeeId = employeeTransferAddRequest.getEmployeeId();
+        //查出要调动的员工信息
+        Employee employee = employeeService.getById(employeeId);
+        ThrowUtils.throwIf(employee == null, ErrorCode.PARAMS_ERROR, "员工不存在");
+        Long outDepId = employee.getEmployeeId();
+        String originalJobTitle = employee.getJobTitle();
+        //获取调动信息
+        String transferReason = employeeTransferAddRequest.getTransferReason();
+        String newJobTitle = employeeTransferAddRequest.getNewJobTitle();
+        Long inDepId = employeeTransferAddRequest.getInDepId();
+        //创建调动记录
+        EmployeeTransfer employeeTransfer = new EmployeeTransfer();
+        employeeTransfer.setEmployeeId(employeeId);
+        employeeTransfer.setTransferReason(transferReason);
+        employeeTransfer.setOriginalJobTitle(originalJobTitle);
+        employeeTransfer.setNewJobTitle(newJobTitle);
+        employeeTransfer.setOutDepId(outDepId);
+        employeeTransfer.setInDepId(inDepId);
+        employeeTransfer.setTransferDate(LocalDate.now());
+        //修改员工信息
+        employee.setJobTitle(newJobTitle);
+        employee.setDepartmentId(inDepId);
+        return this.save(employeeTransfer) && employeeService.updateById(employee);
     }
 }
 

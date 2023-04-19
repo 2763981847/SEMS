@@ -9,6 +9,7 @@ import cn.autumnclouds.sems.model.entity.Employee;
 import cn.autumnclouds.sems.service.EmployeeService;
 import cn.autumnclouds.sems.service.EmployeeService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,9 +53,10 @@ public class EmployeeController {
 
     @GetMapping("/{current}/{size}")
     public Result<Page<Employee>> listEmployees(@PathVariable("current") int currentPage,
-                                                  @PathVariable("size") int pageSize,
-                                                  EmployeeQueryRequest employeeQueryRequest) {
+                                                @PathVariable("size") int pageSize,
+                                                EmployeeQueryRequest employeeQueryRequest) {
         Page<Employee> employeePage = employeeService.listEmployeesPage(currentPage, pageSize, employeeQueryRequest);
         return Result.success(employeePage);
     }
+
 }
