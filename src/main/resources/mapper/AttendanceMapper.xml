@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.autumnclouds.sems.mapper.AttendanceMapper">
+
+    <resultMap id="BaseResultMap" type="cn.autumnclouds.sems.model.entity.Attendance">
+            <id property="attendanceId" column="attendance_id" jdbcType="BIGINT"/>
+            <result property="employeeId" column="employee_id" jdbcType="BIGINT"/>
+            <result property="date" column="date" jdbcType="DATE"/>
+            <result property="signInTime" column="sign_in_time" jdbcType="TIME"/>
+            <result property="signOutTime" column="sign_out_time" jdbcType="TIME"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        attendance_id,employee_id,date,
+        sign_in_time,sign_out_time
+    </sql>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.autumnclouds.sems.mapper.EmployeeMapper">
+
+    <resultMap id="BaseResultMap" type="cn.autumnclouds.sems.model.entity.Employee">
+            <id property="employeeId" column="employee_id" jdbcType="BIGINT"/>
+            <result property="departmentId" column="department_id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="sex" column="sex" jdbcType="SMALLINT"/>
+            <result property="idNumber" column="id_number" jdbcType="VARCHAR"/>
+            <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+            <result property="jobTitle" column="job_title" jdbcType="VARCHAR"/>
+            <result property="empno" column="empno" jdbcType="BIGINT"/>
+            <result property="age" column="age" jdbcType="INTEGER"/>
+            <result property="enrollmentDate" column="enrollment_date" jdbcType="DATE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        employee_id,department_id,name,
+        sex,id_number,phone_number,
+        job_title,empno,age,
+        enrollment_date
+    </sql>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.autumnclouds.sems.mapper.SalaryMapper">
+
+    <resultMap id="BaseResultMap" type="cn.autumnclouds.sems.model.entity.Salary">
+            <id property="salaryId" column="salary_id" jdbcType="BIGINT"/>
+            <result property="employeeId" column="employee_id" jdbcType="BIGINT"/>
+            <result property="payday" column="payday" jdbcType="DATE"/>
+            <result property="baseSalary" column="base_salary" jdbcType="DECIMAL"/>
+            <result property="bonus" column="bonus" jdbcType="DECIMAL"/>
+            <result property="fine" column="fine" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        salary_id,employee_id,payday,
+        base_salary,bonus,fine
+    </sql>
+</mapper>

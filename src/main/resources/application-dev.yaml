@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    # mysql数据库配置
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${VPS_HOST:localhost}:3306/employee_management
+    username: oreki
+    password: ${PASSWORD}

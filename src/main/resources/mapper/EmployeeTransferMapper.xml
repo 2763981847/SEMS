@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.autumnclouds.sems.mapper.EmployeeTransferMapper">
+
+    <resultMap id="BaseResultMap" type="cn.autumnclouds.sems.model.entity.EmployeeTransfer">
+            <id property="transferId" column="transfer_id" jdbcType="BIGINT"/>
+            <result property="employeeId" column="employee_id" jdbcType="BIGINT"/>
+            <result property="transferReason" column="transfer_reason" jdbcType="VARCHAR"/>
+            <result property="originalJobTitle" column="original_job_title" jdbcType="VARCHAR"/>
+            <result property="newJobTitle" column="new_job_title" jdbcType="VARCHAR"/>
+            <result property="outDepId" column="out_dep_id" jdbcType="BIGINT"/>
+            <result property="inDepId" column="in_dep_id" jdbcType="BIGINT"/>
+            <result property="transferDate" column="transfer_date" jdbcType="DATE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        transfer_id,employee_id,transfer_reason,
+        original_job_title,new_job_title,out_dep_id,
+        in_dep_id,transfer_date
+    </sql>
+</mapper>
