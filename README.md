@@ -250,7 +250,7 @@
 
    这一步到学校提供的GaussDB云数据库控制台去执行就行了，需要注意的是上面的sql在GaussDB中不能直接执行，好像GaussDB不支持`comment`语法，把sql中的`comment`相关内容删除即可。执行完成后得到如下五个表:
 
-   ![image-20230420132437945](temp.assets/image-20230420132437945.png)
+   ![image-20230420132437945](https://qn.autumnclouds.cn/wp-content/uploads/202304201451405.png)
 
 3. 后端开发：
 
