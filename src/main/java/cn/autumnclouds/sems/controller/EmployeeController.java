@@ -9,7 +9,9 @@ import cn.autumnclouds.sems.model.entity.Employee;
 import cn.autumnclouds.sems.service.EmployeeService;
 import cn.autumnclouds.sems.service.EmployeeService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/employee")
 @Validated
+@Api(tags = "员工管理模块")
 public class EmployeeController {
     @Resource
     private EmployeeService employeeService;
@@ -34,7 +37,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    public Result<String> deleteEmployee(@PathVariable("id") Integer id) {
+    public Result<String> deleteEmployee(@PathVariable("id") Long id) {
         boolean success = employeeService.removeById(id);
         return success ? Result.success("删除成功") : Result.fail("删除失败");
     }
@@ -46,7 +49,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public Result<Employee> getEmployee(@PathVariable("id") Integer id) {
+    public Result<Employee> getEmployee(@PathVariable("id") Long id) {
         Employee employee = employeeService.getById(id);
         return employee != null ? Result.success(employee) : Result.fail("查询失败");
     }
@@ -54,7 +57,7 @@ public class EmployeeController {
     @GetMapping("/{current}/{size}")
     public Result<Page<Employee>> listEmployees(@PathVariable("current") int currentPage,
                                                 @PathVariable("size") int pageSize,
-                                                EmployeeQueryRequest employeeQueryRequest) {
+                                                @ApiParam("查询条件") EmployeeQueryRequest employeeQueryRequest) {
         Page<Employee> employeePage = employeeService.listEmployeesPage(currentPage, pageSize, employeeQueryRequest);
         return Result.success(employeePage);
     }

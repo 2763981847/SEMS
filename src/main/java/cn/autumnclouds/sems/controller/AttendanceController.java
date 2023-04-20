@@ -7,6 +7,7 @@ import cn.autumnclouds.sems.service.AttendanceService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,14 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/attendance")
 @Validated
+@Api(tags = "考勤管理模块")
 public class AttendanceController {
     @Resource
     private AttendanceService attendanceService;
 
     @PostMapping("/sign/{isSignIn}/{employeeId}")
-    @ApiOperation("签到签退 isSignIn: false:签退 true:签到")
-    public Result<String> sign(@PathVariable("isSignIn") Boolean isSignIn,
+    @ApiOperation("签到签退功能")
+    public Result<String> sign(@PathVariable("isSignIn") @ApiParam("ture-签到，false-签退") Boolean isSignIn,
                                @PathVariable("employeeId") Long employeeId) {
         boolean success = attendanceService.sign(isSignIn, employeeId);
         String msg = isSignIn ? "签到" : "签退";
@@ -40,7 +42,7 @@ public class AttendanceController {
     }
 
     @DeleteMapping("/{id}")
-    public Result<String> deleteAttendance(@PathVariable("id") Integer id) {
+    public Result<String> deleteAttendance(@PathVariable("id") Long id) {
         boolean success = attendanceService.removeById(id);
         return success ? Result.success("删除成功") : Result.fail("删除失败");
     }
@@ -52,7 +54,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/{id}")
-    public Result<Attendance> getAttendance(@PathVariable("id") Integer id) {
+    public Result<Attendance> getAttendance(@PathVariable("id") Long id) {
         Attendance attendance = attendanceService.getById(id);
         return attendance != null ? Result.success(attendance) : Result.fail("查询失败");
     }
@@ -60,7 +62,7 @@ public class AttendanceController {
     @GetMapping("/{current}/{size}")
     public Result<Page<Attendance>> listAttendances(@PathVariable("current") int currentPage,
                                                     @PathVariable("size") int pageSize,
-                                                    AttendanceQueryRequest attendanceQueryRequest) {
+                                                    @ApiParam("查询条件") AttendanceQueryRequest attendanceQueryRequest) {
         Page<Attendance> attendancePage = attendanceService.listAttendancesPage(currentPage, pageSize, attendanceQueryRequest);
         return Result.success(attendancePage);
     }

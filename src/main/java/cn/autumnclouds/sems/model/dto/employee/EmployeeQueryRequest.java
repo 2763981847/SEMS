@@ -3,6 +3,7 @@ package cn.autumnclouds.sems.model.dto.employee;
 import cn.autumnclouds.sems.common.PageRequest;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -55,6 +56,7 @@ public class EmployeeQueryRequest extends PageRequest {
     /**
      * 模糊查询字段
      */
+    @ApiModelProperty("模糊查询字段(可支持根据工号、身份证号、手机号查询)")
     private String fuzzyQuery;
 
 }

@@ -6,7 +6,9 @@ import cn.autumnclouds.sems.model.dto.salary.SalaryQueryRequest;
 import cn.autumnclouds.sems.model.entity.Salary;
 import cn.autumnclouds.sems.service.SalaryService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/salary")
 @Validated
+@Api(tags = "工资管理模块")
 public class SalaryController {
     @Resource
     private SalaryService salaryService;
@@ -32,7 +35,7 @@ public class SalaryController {
     }
 
     @DeleteMapping("/{id}")
-    public Result<String> deleteSalary(@PathVariable("id") Integer id) {
+    public Result<String> deleteSalary(@PathVariable("id") Long id) {
         boolean success = salaryService.removeById(id);
         return success ? Result.success("删除成功") : Result.fail("删除失败");
     }
@@ -44,7 +47,7 @@ public class SalaryController {
     }
 
     @GetMapping("/{id}")
-    public Result<Salary> getSalary(@PathVariable("id") Integer id) {
+    public Result<Salary> getSalary(@PathVariable("id") Long id) {
         Salary salary = salaryService.getById(id);
         return salary != null ? Result.success(salary) : Result.fail("查询失败");
     }
@@ -52,7 +55,7 @@ public class SalaryController {
     @GetMapping("/{current}/{size}")
     public Result<Page<Salary>> listSalaries(@PathVariable("current") int currentPage,
                                              @PathVariable("size") int pageSize,
-                                             SalaryQueryRequest salaryQueryRequest) {
+                                             @ApiParam("查询条件") SalaryQueryRequest salaryQueryRequest) {
         Page<Salary> salaryPage = salaryService.listSalariesPage(currentPage, pageSize, salaryQueryRequest);
         return Result.success(salaryPage);
     }
