@@ -290,5 +290,3 @@
 5. 部署上线：
 
    借助maven的`package`命令将项目打成了jar包，并借助宝塔面板实现了项目的快速部署，在线演示地址：http://sems.autumnclouds.cn/doc.html
-
-   注：jar包已一同提交，下载后使用`java -jar`命令即可运行，默认运行在本机8090端口。运行后访问http://localhost:8090/doc.html即可。
