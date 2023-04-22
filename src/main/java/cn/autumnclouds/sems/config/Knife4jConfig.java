@@ -20,7 +20,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
  * @author oreki
  */
 @Configuration
-@EnableSwagger2WebMvc
 public class Knife4jConfig {
 
     @Bean
@@ -30,8 +29,8 @@ public class Knife4jConfig {
                         .title("SEMS接口文档")
                         .description("SEMS")
                         .version("1.0")
-                        .description("基于CQU数据库实验的简单员工管理系统Demo")
-                        .contact(new Contact("oreki", "www.autumnclouds.cn", "2763981847@qq.com"))
+                        .description("基于CQU数据库实验的简单员工管理系统Demo（Simple employee management system）")
+                        .contact(new Contact("Oreki", "www.autumnclouds.cn", "2763981847@qq.com"))
                         .build())
                 .select()
                 // 指定 Controller 扫描包路径
